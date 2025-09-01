@@ -73,7 +73,7 @@ public class PowerUpSpawner : MonoBehaviour
                 active.Add(go);
 
                 // Notificar al power-up su spawner
-                var pu = go.GetComponent<PowerUp>();
+                var pu = go.GetComponentInChildren<PowerUp>();
                 if (pu != null) pu.SetSpawner(this);
 
                 return; // éxito
@@ -103,13 +103,14 @@ public class PowerUpSpawner : MonoBehaviour
     // Llamado por PowerUp cuando se recoge o expira
     public void NotifyPowerUpGone(PowerUp pu)
     {
+		Debug.Log("Powerups activos: " + active.Count);
         // Quitar de la lista si existiera (por si acaso)
         for (int i = active.Count - 1; i >= 0; i--)
         {
             if (active[i] == null) { active.RemoveAt(i); continue; }
-            if (active[i].GetComponent<PowerUp>() == pu)
+            if (active[i].GetComponentInChildren<PowerUp>() == pu)
             {
-                active.RemoveAt(i);
+                active.RemoveAt(i);	
                 break;
             }
         }
