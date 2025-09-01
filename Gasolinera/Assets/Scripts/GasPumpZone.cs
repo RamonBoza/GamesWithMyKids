@@ -28,13 +28,21 @@ public class GasPumpZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))  player1Inside = true;
 		if (other.CompareTag("Player2")) player2Inside = true;
+
+		if ( player1Inside || player2Inside ) {
+			var pp = other.GetComponent<PlayerPowerUps>();
+	    	bool instant = pp && pp.TryConsumeInstantFill();
+			if (instant) 
+			{
+				CompletarRepostaje();
+			}
+		}
+
+		
     }
 
     void OnTriggerExit(Collider other)
     {
-	    
-	    var pp = other.GetComponent<PlayerPowerUps>();
-	    bool instant = pp && pp.TryConsumeInstantFill();
 	    // si usas barra de progreso, salta al final si instant == true
 	    // si sirves con tecla, simplemente llama ServeCar() y listo
 	    
@@ -52,6 +60,21 @@ public class GasPumpZone : MonoBehaviour
             if (progressBar) progressBar.Show(false);
 		}
     }
+
+	void CompletarRepostaje()
+	{
+		// Completar
+        if (progressBar) { progressBar.SetProgress01(1f); progressBar.Show(false); }
+		CarPatience patience = car.GetComponent<CarPatience>();
+		if (patience != null)
+		{
+    	patience.ServeCar();
+		}
+				
+        GameManager.Instance.AddScore(10); // cada coche atendido da 10 puntos
+		progress = 0f;
+        filling = false;
+	}
 
     void Update()
     {
@@ -72,17 +95,7 @@ public class GasPumpZone : MonoBehaviour
 
             if (progress >= fillTime)
             {
-                // Completar
-                if (progressBar) { progressBar.SetProgress01(1f); progressBar.Show(false); }
-				CarPatience patience = car.GetComponent<CarPatience>();
-				if (patience != null)
-				{
-    				patience.ServeCar();
-				}
-				
-                GameManager.Instance.AddScore(10); // cada coche atendido da 10 puntos
-                progress = 0f;
-                filling = false;
+                CompletarRepostaje();
             }
         }
 
@@ -100,17 +113,7 @@ public class GasPumpZone : MonoBehaviour
 
             if (progress >= fillTime)
             {
-                // Completar
-                if (progressBar) { progressBar.SetProgress01(1f); progressBar.Show(false); }
-				CarPatience patience = car.GetComponent<CarPatience>();
-				if (patience != null)
-				{
-    				patience.ServeCar();
-				}
-				
-                GameManager.Instance.AddScore(10); // cada coche atendido da 10 puntos
-                progress = 0f;
-                filling = false;
+                CompletarRepostaje();
             }
         }
         
